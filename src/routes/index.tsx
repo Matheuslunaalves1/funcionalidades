@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 
 // Importando os componentes de PÁGINA que vamos criar em breve
 import   Dashboard  from '@/modules/dashboard/index'; 
+import { LoginPage } from '@/modules/auth/index'
 //import { LoginPage } from '@/features/autenticacao';
 
 export function AppRoutes() {
@@ -16,6 +17,7 @@ export function AppRoutes() {
       <Route path="/" element={<Dashboard />} />
 
       {/* No futuro, você adicionará outras rotas aqui */}
+      <Route path='/login' element={<LoginPage />}/>
       {/* <Route path="/veiculos" element={<VeiculosPage />} /> */}
     </Routes>
   );
