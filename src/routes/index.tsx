@@ -1,24 +1,52 @@
 // Localização: src/routes/index.tsx
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-// Importando os componentes de PÁGINA que vamos criar em breve
-import   Dashboard  from '@/modules/dashboard/index'; 
-import { LoginPage } from '@/modules/auth/index'
-//import { LoginPage } from '@/features/autenticacao';
+// Componentes do Módulo de Autenticação (LoginPage e o NOVO PrivateRoute)
+import Dashboard from '@/modules/dashboard/index'; 
+// CORREÇÃO: Certifique-se de que a LoginPage está importando do arquivo .tsx correto, não do index da pasta.
+import { LoginPage } from '@/modules/auth/loginPage'; // Assumindo que o arquivo é LoginPage.tsx
+import { PrivateRoute } from './privateRoute';     // <<-- NOVO GUARDA DE ROTAS
+
+// Componentes da Aplicação Principal
+import { ClientCompanyPage } from '@/modules/companies/ClientCompanyPage'; 
+import { CompanyFormPage } from '@/modules/companies/CompanyFormPage'; 
+import MainLayout from '@/components/layout/MainLayout';
+// Importe o VeiculosPage se precisar que ele esteja disponível
+// import { VeiculosPage } from '@/pages/VeiculosPage'; 
+
 
 export function AppRoutes() {
   return (
     <Routes>
-      {/* A URL '/login' vai mostrar o componente LoginPage 
-      <Route path="/login" element={<LoginPage />} />*/}
+      
+      {/* 1. ROTAS PÚBLICAS (Acessíveis sem login) */}
+      <Route path='/login' element={<LoginPage />} />
 
-      {/* A URL principal '/' (raiz do site) vai mostrar o DashboardPage */}
-      <Route path="/" element={<Dashboard />} />
+      {/* 2. ROTAS PROTEGIDAS (Verificadas pelo PrivateRoute) */}
+      <Route element={<PrivateRoute />}>
+        
+        {/* Rota Raiz: Redireciona para /empresas ou /dashboard após o login */}
+        {/* Você tinha uma rota solta para Dashboard, vamos colocá-la dentro da proteção: */}
+        <Route path="/" element={<Navigate to="/empresas" replace />} />
 
-      {/* No futuro, você adicionará outras rotas aqui */}
-      <Route path='/login' element={<LoginPage />}/>
-      {/* <Route path="/veiculos" element={<VeiculosPage />} /> */}
+        {/* Rotas que usam o Layout Principal (Sidebar + Header) */}
+        <Route element={<MainLayout />}> 
+          
+          {/* Rotas que aparecem no Layout */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          {/* <Route path="/veiculos" element={<VeiculosPage />} /> */}
+
+          {/* ROTAS DA GESTÃO DE EMPRESAS (Sua funcionalidade) */}
+          <Route path="/empresas" element={<ClientCompanyPage />} /> 
+          <Route path="/empresas/cadastrar" element={<CompanyFormPage />} /> 
+          <Route path="/empresas/editar/:id" element={<CompanyFormPage />} />
+        </Route>
+      </Route>
+      
+      {/* Opcional: Rota para tratar URLs que não existem (404) */}
+      <Route path="*" element={<div>Página Não Encontrada</div>} />
+
     </Routes>
   );
 }
